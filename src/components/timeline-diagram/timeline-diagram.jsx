@@ -112,8 +112,13 @@ const Transaction = ({
     const pathData = `M${leftPos},${scaledY(yPos - 20)} q0,20 20,20 h${width - 20} v1 h${-(width - 20)} q-20,0 -20,20 z`;
     return (
       <TransactionGroup active={active} onClick={onClick}>
+        <rect
+          fill={theme.colors.light}
+          x={leftPos + 10}
+          y={scaledY(yPos - 5)}
+          width={(rightPos - leftPos) - 20}
+          height={20} />
         <path d={pathDataRect} fill={`url(#grad-${step})`} fillOpacity={active ? 1 : 0.2} />
-
         {active && (
           <g clipPath={`url(#clip-${step})`}>
             <line
@@ -135,6 +140,8 @@ const Transaction = ({
           </g>
           )
         }
+        <TransactionSource r={5} cx={fromPos} cy={scaledY(yPos + 6)} fill='white' />
+        <TransactionSource r={5} cx={toPos} cy={scaledY(yPos + 6)} fill='white' />
         <defs>
           <linearGradient id={`grad-${step}`}>
             <stop offset='0%' stopColor={_getColor(leftPos === fromPos ? from : to)} />
@@ -212,6 +219,23 @@ class TimelineDiagram extends Component {
       activeStep: i,
       description: this._getDescription(i)
     });
+  }
+  _getViewBox() {
+    const {
+      height,
+      width
+    } = this.props;
+    const ratio = height / width;
+    const scaledY = val => ratio * val;
+
+    const zoom = 1;
+
+    const x = 0;
+    const y = 0;
+    const w = 1000 * zoom;
+    const h = scaledY(zoom * 1000);
+
+    return `${x} ${y} ${w} ${h}`;
   }
   nextStep() {
     const { activeStep } = this.state;
@@ -329,7 +353,7 @@ class TimelineDiagram extends Component {
     const transactionLines = (
       <g>
         {TRANSACTIONS[id].map((t, i) => <Transaction
-          active={activeStep === t.step}
+          active={activeStep === t.step || activeStep == t.pairStep}
           onClick={() => this._handleTransactionSelected(t.step)}
           key={i}
           {...t}
@@ -340,7 +364,11 @@ class TimelineDiagram extends Component {
     );
 
     return (
-      <TimelineDiagramWrapper viewBox={`0 0 1000 ${scaledY(1000)}`} width={width} height={height}>
+      <TimelineDiagramWrapper
+        viewBox={this._getViewBox()}
+        preserveAspectRatio='align xMinYMin'
+        width={width}
+        height={height}>
         {benBox}
         {orgLines}
         {transactionLines}

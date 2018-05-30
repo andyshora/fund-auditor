@@ -7,7 +7,7 @@ export const TimelineDiagramWrapper = styled.svg`
 
 export const OrgLabel = styled.text`
   text-anchor: middle;
-  font-size: 2rem;
+  font-size: 1.6rem;
   text-transform: uppercase;
 `;
 
@@ -65,7 +65,6 @@ export const TransactionJuice = styled.path`
 
 export const TransactionSource = styled.circle`
   stroke: ${theme.colors.main4};
-  fill: white;
 `;
 
 export const TransactionTokens = styled.circle`
