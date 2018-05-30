@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import * as log from 'loglevel';
 
 // Components
-import Key from '../key';
 import {
   Close as CloseIcon
 } from 'material-ui-icons';
@@ -30,7 +29,6 @@ const Error = ({
       {typeof onClose === 'function' && <CloseIcon {...eventHandlers} style={{ color: 'white', width: 50, height: 20 }} />}
       <h2>Error: {title}</h2>
       <p>{description}</p>
-      <p><i>You can open the Browser Console to check for additional error details which may have been logged. Windows: <Key>ctrl</Key>+<Key>shift</Key>+<Key>J</Key> Mac: <Key>cmd</Key>+<Key>alt</Key>+<Key>J</Key></i></p>
     </ErrorWrapper>
   );
 };

@@ -5,6 +5,19 @@ import { theme, media } from '../../styles/utils';
 export const TimelineDiagramWrapper = styled.svg`
 `;
 
+export const OrgLabel = styled.text`
+  text-anchor: middle;
+  font-size: 2rem;
+  text-transform: uppercase;
+`;
+
+export const TransLabel = styled.text`
+  text-anchor: middle;
+  font-size: 1rem;
+  text-transform: uppercase;
+  fill: ${theme.colors.main2};
+`;
+
 export const DiberseRect = styled.rect`
   fill: ${theme.colors.main2};
   fill-opacity: 1;
@@ -40,11 +53,32 @@ export const TimeStepRect = styled.rect`
 
 export const TransactionLine = styled.line`
   stroke: ${theme.colors.main4};
-  stroke-dasharray: 3, 3;
+  stroke-dasharray: 0, 0;
   marker-end: url(#arrow);
+  opacity: ${props => props.active ? 1 : 0.2};
+`;
+
+export const TransactionJuice = styled.path`
+  fill: ${theme.colors.light};
+  stroke: ${theme.colors.dark};
 `;
 
 export const TransactionSource = styled.circle`
   stroke: ${theme.colors.main4};
   fill: white;
 `;
+
+export const TransactionTokens = styled.circle`
+  fill: ${theme.colors.main4};
+`;
+
+export const TransactionGroupOutline = styled.rect`
+  fill: ${theme.colors.alternate};
+  fill-opacity: 0;
+  cursor: pointer;
+  &:hover {
+    fill-opacity: 0.1;
+  }
+`;
+
+export const TransactionGroup = styled.g``;
