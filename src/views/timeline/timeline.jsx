@@ -14,7 +14,7 @@ const Timeline = ({ match: { params: { id }} }) => {
   return (
     <TimelineWrapper>
       <ContainerDimensions>
-        {({ width, height }) => <TimelineDiagram width={width} height={window.innerHeight} />}
+        {({ width, height }) => <TimelineDiagram width={width} height={window.innerHeight} id={Number.parseInt(id, 10)} />}
       </ContainerDimensions>
     </TimelineWrapper>
   );

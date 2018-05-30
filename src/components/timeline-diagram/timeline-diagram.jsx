@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import * as log from 'loglevel';
+
+import { TRANSACTIONS } from '../../mock-data/transactions';
 
 // Styles
 import {
@@ -18,26 +21,25 @@ const layout = {
   positions: {
     orgs: [100, 200, 900],
     beneficiaries: {
-      start: 350,
-      end: 750
+      start: 400,
+      end: 700
     }
   }
 };
 
-const NUM_STEPS = 10;
 const LINES_HEIGHT = 600;
-const NUM_BENEFICIARIES = 5;
 
-const _genBeneficiaryPosition = index => {
+const _genBeneficiaryPosition = ({ index, numBeneficiaries }) => {
 
   const { start, end } = layout.positions.beneficiaries;
   const width = end - start;
-
-  return start + (index * (width / (NUM_BENEFICIARIES - 1)));
-
+  const fract = (numBeneficiaries === 1)
+    ? 0.5
+    : index / (numBeneficiaries - 1);
+  return start + (fract * width);
 };
 
-const _getPosition = str => {
+const _getPosition = (str, numBeneficiaries) => {
   switch (str) {
     case 'dib':
     case 'diberse':
@@ -49,20 +51,22 @@ const _getPosition = str => {
       return layout.positions.orgs[2];
     default:
       const arr = str.split('ben');
-      return _genBeneficiaryPosition(Number.parseInt(arr[1], 10));
+      return _genBeneficiaryPosition({ index: Number.parseInt(arr[1], 10), numBeneficiaries });
   }
 };
 
 const Transaction = ({
   from,
   to,
+  numBeneficiaries,
+  numSteps,
   step,
   scaledY
 }) => {
-  const fromPos = _getPosition(from);
-  const toPos = _getPosition(to);
+  const fromPos = _getPosition(from, numBeneficiaries);
+  const toPos = _getPosition(to, numBeneficiaries);
 
-  const yPos = 200 + (step * (LINES_HEIGHT / (NUM_STEPS + 1)));
+  const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
   return (
     <g>
       <TransactionLine x1={fromPos} x2={toPos} y1={scaledY(yPos)} y2={scaledY(yPos)}  />
@@ -74,11 +78,14 @@ const Transaction = ({
 class TimelineDiagram extends Component {
   render() {
     const {
+      id,
       height,
       width
     } = this.props;
 
     const ratio = height / width;
+    const numBeneficiaries = id;
+    const numSteps = 1 + (numBeneficiaries * 3);
 
     const scaledY = val => ratio * val;
 
@@ -94,11 +101,17 @@ class TimelineDiagram extends Component {
         <DiberseRect stroke='black' fill='none' x={98} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
         <NGORect stroke='black' fill='none' x={198} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
 
-        <BeneficiaryRect stroke='black' fill='none' x={348} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
-        <BeneficiaryRect stroke='black' fill='none' x={448} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
-        <BeneficiaryRect stroke='black' fill='none' x={548} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
-        <BeneficiaryRect stroke='black' fill='none' x={648} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
-        <BeneficiaryRect stroke='black' fill='none' x={748} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
+        {_.times(numBeneficiaries).map(index => {
+          const xPos = _genBeneficiaryPosition({ index, numBeneficiaries });
+          return <BeneficiaryRect
+            key={index}
+            stroke='black'
+            fill='none'
+            x={xPos - 2}
+            y={scaledY(200)}
+            width={4}
+            height={scaledY(LINES_HEIGHT)} />;
+        })}
 
         <PartnerRect stroke='black' fill='none' x={898} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
       </g>
@@ -116,61 +129,31 @@ class TimelineDiagram extends Component {
 
     const timeSteps = (
       <g>
-        {_.times(NUM_STEPS, i => <TimeStepRect x={50} y={scaledY(200 + ((i + 1) * (LINES_HEIGHT / (NUM_STEPS + 1))))} height={1} width={900} />)}
+        {_.times(numSteps, i => (
+          <TimeStepRect
+            key={i}
+            x={50}
+            y={scaledY(200 + ((i + 1) * (LINES_HEIGHT / (numSteps + 1))))}
+            height={1}
+            width={900} />
+        ))}
       </g>
     );
-    const transactions = [
-      {
-        step: 0,
-        from: 'dib',
-        to: 'ngo',
-        amount: 1000,
-        type: 'tokens'
-      },
-      {
-        step: 1,
-        from: 'ngo',
-        to: 'ben0',
-        amount: 100,
-        type: 'tokens'
-      },
-      {
-        step: 2,
-        from: 'ngo',
-        to: 'ben1',
-        amount: 100,
-        type: 'tokens'
-      },
-      {
-        step: 3,
-        from: 'ngo',
-        to: 'ben2',
-        amount: 100,
-        type: 'tokens'
-      },
-      {
-        step: 4,
-        from: 'ben2',
-        to: 'par',
-        amount: 100,
-        type: 'tokens'
-      },
-      {
-        step: 5,
-        from: 'par',
-        to: 'ben2',
-        amount: 100,
-        type: 'tokens'
-      }
-    ];
+
     const transactionLines = (
       <g>
-        {transactions.map((t, i) => <Transaction {...t} scaledY={scaledY} />)}
+        {TRANSACTIONS[id].map((t, i) => <Transaction
+          key={i}
+          {...t}
+          scaledY={scaledY}
+          numBeneficiaries={numBeneficiaries}
+          numSteps={numSteps} />)}
       </g>
     );
 
     return (
       <TimelineDiagramWrapper viewBox={`0 0 1000 ${scaledY(1000)}`} width={width} height={height}>
+        {timeSteps}
         {boundsBox}
         {orgLines}
         {transactionLines}
@@ -178,13 +161,14 @@ class TimelineDiagram extends Component {
           <marker id='arrow' markerWidth='10' markerHeight='10' refX='5' refY='3' orient='auto' markerUnits='strokeWidth' viewBox='0 0 10 10'>
             <path d='M0,0 l0,6 l3,-3 z' fill='black' />
           </marker>
-      </defs>
+        </defs>
       </TimelineDiagramWrapper>
     );
   }
 }
 
 TimelineDiagram.propTypes = {
+  id: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired
 };
