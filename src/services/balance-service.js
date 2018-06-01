@@ -94,7 +94,7 @@ class BalanceService {
     return balance;
   }
   getBalance(orgName, timeWindow) {
-    log.info('getBalance', orgName, timeWindow);
+    // log.info('getBalance', orgName, timeWindow);
     if (timeWindow) {
       return this._getBalanceWithinWindow(orgName, timeWindow);
     }

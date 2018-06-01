@@ -3,7 +3,7 @@ import { css } from 'styled-components';
 const colors = {
   dark: 'rgb(12,12,12)',
   dark2: 'rgb(22,22,22)',
-  light: 'rgb(250, 250, 250)',
+  light: 'rgb(255, 255, 255)',
   bright: 'rgb(0, 255, 235)',
   bright2: 'rgb(0, 206, 190)',
   main1: 'rgb(139, 67, 239)',

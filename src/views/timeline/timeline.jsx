@@ -7,6 +7,12 @@ import * as log from 'loglevel';
 // Components
 import TimelineDiagram from '../../components/timeline-diagram';
 
+// Services
+import { balanceService as balances } from '../../services/balance-service';
+
+// Data
+import { TRANSACTIONS } from '../../mock-data/transactions';
+
 // Styles
 import { TimelineWrapper } from './timeline-styles';
 
@@ -14,8 +20,20 @@ class Timeline extends Component {
   _diagram = null
   _handlePrevTapped = () => this._diagram && this._diagram.prevStep()
   _handleNextTapped = () => this._diagram && this._diagram.nextStep()
+  _handleResetTapped = () => this._diagram && this._diagram.resetView()
   render() {
     const { match: { params: { id }} } = this.props;
+    balances.init({ id, transactions: TRANSACTIONS[id] });
+    // const b = balances.getBalance('ben0');
+    // const ins = balances.getIns('ben0');
+    // const outs = balances.getOuts('ben0');
+    //
+    // const b2 = balances.getBalance('ben0', [4,5]);
+    // console.table(b);
+    // console.table(ins);
+    // console.table(outs);
+    // console.table(b2);
+    // log.info('ben0', b, ins, outs);
     return (
       <TimelineWrapper>
         <ContainerDimensions>
@@ -27,8 +45,7 @@ class Timeline extends Component {
         </ContainerDimensions>
         {this._diagram && (
           <div>
-            <button onClick={this._handlePrevTapped}>Previous</button>
-            <button onClick={this._handleNextTapped}>Next</button>
+            <button onClick={this._handleResetTapped}>Reset</button>
           </div>
         )}
       </TimelineWrapper>

@@ -2,13 +2,53 @@ import styled from 'styled-components';
 
 import { theme, media } from '../../styles/utils';
 
-export const TimelineDiagramWrapper = styled.svg`
+export const TimelineDiagramWrapper = styled.div`
+  position: relative;
+`;
+
+export const SVG = styled.svg`
+`;
+
+export const DescriptionSection = styled.section`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  padding: 2rem;
+  border-top: 1px solid ${theme.colors.dark};
+  background: ${theme.colors.light};
+  text-align: center;
+
+  > svg {
+    cursor: pointer;
+    border: 1px solid ${theme.colors.dark};
+
+    &:hover {
+      background: ${theme.colors.main2};
+      > path {
+        fill: white;
+      }
+    }
+  }
 `;
 
 export const OrgLabel = styled.text`
   text-anchor: middle;
-  font-size: 1.6rem;
+  font-size: 3rem;
   text-transform: uppercase;
+  ${media.fromMedium`font-size: 1.6rem;`}
+`;
+
+export const NodeLabel = styled.text`
+  opacity: ${props => props.active ? 1 : 0.2};
+  text-anchor: ${props => props.textAnchor || 'middle'};
+  text-transform: uppercase;
+  font-size: 1.6rem;
+
+  ${media.fromMedium`font-size: 0.5rem;`}
 `;
 
 export const TransLabel = styled.text`
@@ -18,7 +58,7 @@ export const TransLabel = styled.text`
   fill: ${theme.colors.main2};
 `;
 
-export const DiberseRect = styled.rect`
+export const DisberseRect = styled.rect`
   fill: ${theme.colors.main2};
   fill-opacity: 1;
   stroke: ${theme.colors.main2};
@@ -51,6 +91,14 @@ export const TimeStepRect = styled.rect`
   fill-opacity: 0.1;
 `;
 
+export const TransactionLines = styled.g`
+  transition: all 1s;
+`;
+
+export const OrgLines = styled.g`
+  transition: all 1s;
+`;
+
 export const TransactionLine = styled.line`
   stroke: ${theme.colors.main4};
   stroke-dasharray: 0, 0;
@@ -65,6 +113,7 @@ export const TransactionJuice = styled.path`
 
 export const TransactionSource = styled.circle`
   stroke: ${theme.colors.main4};
+  transition: all 1s;
 `;
 
 export const TransactionTokens = styled.circle`
