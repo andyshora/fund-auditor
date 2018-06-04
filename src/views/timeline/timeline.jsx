@@ -23,7 +23,8 @@ class Timeline extends Component {
   _handleResetTapped = () => this._diagram && this._diagram.resetView()
   render() {
     const { match: { params: { id }} } = this.props;
-    balances.init({ id, transactions: TRANSACTIONS[id] });
+    const dataSetId = typeof id === 'undefined' ? 1 : id;
+    balances.init({ id: dataSetId, transactions: TRANSACTIONS[dataSetId] });
     return (
       <TimelineWrapper>
         <ContainerDimensions>
@@ -31,7 +32,7 @@ class Timeline extends Component {
             ref={el => { this._diagram = el }}
             width={width}
             height={window.innerHeight}
-            id={Number.parseInt(id, 10)} />}
+            id={Number.parseInt(dataSetId, 10)} />}
         </ContainerDimensions>
         {this._diagram && (
           <div>

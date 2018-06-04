@@ -6,7 +6,7 @@ export const ORGS = {
   'ben3': 'School D',
   'ben4': 'School E',
   'ben5': 'School F',
-  'par': 'Corporate Partner',
+  'par': 'Local Partner',
   'dis': 'Disberse'
 };
 
@@ -16,7 +16,7 @@ export const TRANSACTIONS = {
       step: 0,
       from: 'dis',
       to: 'ngo',
-      amount: 1000,
+      amount: 100,
       type: 'tokens',
       desc: 'Tokens issued to #RECIPIENT#'
     },
@@ -41,9 +41,9 @@ export const TRANSACTIONS = {
       pairStep: 2,
       from: 'par',
       to: 'ben0',
-      amount: 100,
+      amount: 90,
       type: 'USD',
-      desc: 'Tokens successfully converted into #TYPE#'
+      desc: 'Tokens successfully converted into #TYPE#, minus 10% fee'
     },
     {
       step: 4,

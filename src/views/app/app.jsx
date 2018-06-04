@@ -56,6 +56,7 @@ class App extends Component {
               <Switch>
                 <Route path={'/transaction'} component={Transaction} />
                 <Route path={'/timeline/:id?'} component={Timeline} />
+                <Route path={'/'} component={Timeline} />
               </Switch>
             </MainSection>
           </div>
@@ -65,12 +66,17 @@ class App extends Component {
   }
 }
 
-App.propTypes = {
-  dispatch: PropTypes.func.isRequired
-};
+App.propTypes = {};
 
 App.defaultProps = {
   errors: []
 };
 
-export default connect(appSelector)(App);
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

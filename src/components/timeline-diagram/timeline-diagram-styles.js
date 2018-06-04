@@ -57,7 +57,7 @@ export const Balances = styled.div`
   position: absolute;
   width: 100%;
   bottom: 0;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
   border-top: 1px solid ${theme.colors.dark};
 
   ${media.fromLarge`
@@ -65,6 +65,7 @@ export const Balances = styled.div`
     width: 360px;
     right: 0;
     top: 0;
+    bottom: auto;
     border-top: none;
     border-left: 1px solid ${theme.colors.dark};
     border-bottom: 1px solid ${theme.colors.dark};
@@ -117,7 +118,7 @@ export const BalanceCellChange = styled.div`
   `}
 
   > span {
-    border: 1px solid ${props => props.from ? theme.colors.negative : theme.colors.positive};
+    border: 1px solid ${props => props.positive ? theme.colors.negative : theme.colors.positive};
     padding: 0.1rem 0.3rem;
     color: ${theme.colors.dark};
     border-radius: 2px;
@@ -136,7 +137,7 @@ export const NodeLabel = styled.text`
   opacity: ${props => props.active ? 1 : 0.2};
   text-anchor: ${props => props.textAnchor || 'middle'};
   text-transform: uppercase;
-  font-size: 1.6rem;
+  font-size: 1rem;
 
   ${media.fromMedium`font-size: 0.5rem;`}
 `;
@@ -182,11 +183,9 @@ export const TimeStepRect = styled.rect`
 `;
 
 export const TransactionLines = styled.g`
-  transition: all 1s;
 `;
 
 export const OrgLines = styled.g`
-  transition: all 1s;
 `;
 
 export const TransactionLine = styled.line`
@@ -203,7 +202,7 @@ export const TransactionJuice = styled.path`
 
 export const TransactionSource = styled.circle`
   stroke: ${theme.colors.main4};
-  transition: all 1s;
+  vector-effect: non-scaling-stroke;
 `;
 
 export const TransactionGroup = styled.g``;

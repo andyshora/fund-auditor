@@ -136,29 +136,31 @@ const Transaction = ({
       .replace('#AMOUNT#', amount)
     : '';
   if (type) {
-    const pathDataRect = `M${leftPos},${scaledY(yPos)} h${width} v10 h${-width} z`;
+    const pathDataRect = `M${leftPos},${scaledY(yPos)} h${width} v${scaledY(10)} h${-width} z`;
     const pathData = `M${leftPos},${scaledY(yPos - 20)} q0,20 20,20 h${width - 20} v1 h${-(width - 20)} q-20,0 -20,20 z`;
 
     const bulletWidth = amount < 500 ? 20 : 50;
     const prefix = positiveDir ? '' : <tspan dy={-0.6}>←</tspan>;
     const suffix = positiveDir ? <tspan dy={-0.6}>→</tspan> : '';
 
+    const bgFill = type === 'settle' ? 'white' : `url(#grad-${step})`;
+    const stroke = type === 'settle' ? `url(#grad-${step})` : `none`;
+
     return (
       <TransactionGroup active={active} onClick={onClick}>
-        <rect
-          fill={theme.colors.light}
-          x={leftPos + 10}
-          y={scaledY(yPos - 10)}
-          width={(rightPos - leftPos) - 20}
-          height={20} />
-        <path d={pathDataRect} fill={`url(#grad-${step})`} fillOpacity={active ? 1 : 0.2} />
-        {active && (
+        <path
+          d={pathDataRect}
+          fill={bgFill}
+          fillOpacity={active ? 1 : 0.2}
+          strokeDasharray='2,1'
+          stroke={stroke} />
+        {active && false && (
           <g clipPath={`url(#clip-${step})`}>
             <rect
               x={fromPos}
-              y={scaledY(yPos)}
+              y={scaledY(yPos - 10)}
               width={20}
-              height={20}
+              height={scaledY(20)}
               fill='url(#grad-transfer)'>
               <animateTransform
                 attributeName='transform'
@@ -169,8 +171,19 @@ const Transaction = ({
                 repeatCount='indefinite' />
             </rect>
           </g>
-          )
-        }
+          )}
+        <g>
+          <TransactionSource
+            r={scaledY(5)}
+            cx={fromPos}
+            cy={scaledY(yPos + 5)}
+            fill='white' />
+          <TransactionSource
+            r={scaledY(5)}
+            cx={toPos}
+            cy={scaledY(yPos + 5)}
+            fill='white' />
+        </g>
         <g>
           <NodeLabel active={active} textAnchor={fromAnchor} x={fromPos + fromOffset} y={scaledY(yPos - 5)}>{_getNiceName(from)}</NodeLabel>
           {amount && <NodeLabel active={active} textAnchor={'middle'} x={leftPos + ((rightPos - leftPos) / 2)} y={scaledY(yPos + 30)}>{prefix} {amount} {type} {suffix}</NodeLabel>}
@@ -204,13 +217,7 @@ class TimelineDiagram extends Component {
 
   }
   componentDidMount() {
-    this._initialiseViewBox();
-
-    setTimeout(() => {
-      this.setState({
-        showTransactions: true
-      });
-    }, 2000);
+    this._handleTransactionSelected(0);
   }
   _initialiseViewBox() {
     this._changeViewBox();
@@ -242,7 +249,8 @@ class TimelineDiagram extends Component {
   _handleTransactionSelected = i => {
     this.setState({
       activeStep: i,
-      description: this._getDescription(i)
+      description: this._getDescription(i),
+      showTransactions: true
     }, () => {
       this._focusOnStep(i);
     });
@@ -267,8 +275,12 @@ class TimelineDiagram extends Component {
     const fromPos = _getPosition(from, numBeneficiaries);
     const toPos = _getPosition(to, numBeneficiaries);
 
-    const left = Math.min(fromPos, toPos) - 50;
-    const right = Math.max(fromPos, toPos) + 50;
+    const isWide = width >= 1000;
+    // viewBox padding, so we can show some space around the active transaction line
+    const padding = isWide ? 50 : 0;
+
+    const left = Math.min(fromPos, toPos) - padding;
+    const right = Math.max(fromPos, toPos) + padding;
 
     const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
 
@@ -283,8 +295,8 @@ class TimelineDiagram extends Component {
     };
   }
   _getViewBox({
-    top = 0,
-    bottom = 1000,
+    top = 400,
+    bottom = 1400,
     left = 0,
     right = 1000
   }) {
@@ -297,12 +309,15 @@ class TimelineDiagram extends Component {
     const isWide = width >= 1000;
 
     const x = left;
-    const y = top - ((bottom - top) * 0.3);
-    const w = Math.max(right - left, 300);
+    const y = Math.max(130, top - ((bottom - top) * 0.3));
+    const w = right - left;
     const h = scaledY(bottom - top);
     const leftOffset = isWide ? 150 : 0;
+    const topOffset = isWide ? -100 : 0;
 
-    const viewBox = `${x} ${y} ${w + leftOffset} ${h}`;
+    log.info('y', y);
+
+    const viewBox = `${x} ${y + topOffset} ${w + leftOffset} ${h}`;
     return viewBox;
   }
   _focusOnStep(step) {
@@ -365,40 +380,6 @@ class TimelineDiagram extends Component {
 
     const scaledY = val => ratio * val;
 
-    const positions = _.flatten(TRANSACTIONS[id].map((t, i) => {
-      const { from, to, step } = t;
-      let numSteps = 1 + (numBeneficiaries * 3);
-      const yPos = 205 + (step * (LINES_HEIGHT / (numSteps + 1)));
-      const fromPos = _getPosition(from, numBeneficiaries);
-      const toPos = _getPosition(to, numBeneficiaries);
-
-      return [
-        {
-          start: {
-            x: fromPos,
-            y: scaledY(150)
-          },
-          end: {
-            x: fromPos,
-            y: scaledY(yPos + 3)
-          }
-        },
-        {
-          start: {
-            x: toPos,
-            y: scaledY(150)
-          },
-          end: {
-            x: toPos,
-            y: scaledY(yPos + 3)
-          }
-        }
-      ];
-    }));
-
-    const initialChain = positions.map((pos, i) => (
-      <TransactionSource key={`${i}`} r={5} cx={showTransactions ? pos.end.x : pos.start.x} cy={showTransactions ? pos.end.y : pos.start.y} fill='white' />
-    ));
 
     const boundsBox = (
       <g>
@@ -476,16 +457,23 @@ class TimelineDiagram extends Component {
 
     const transactionLines = (
       <TransactionLines ref={el => { this.transactionLines = el; }} opacity={showTransactions ? 1 : 0}>
-        {TRANSACTIONS[id].map((t, i) => (
-          <Transaction
-            active={activeStep === t.step || activeStep == t.pairStep}
-            onClick={() => this._handleTransactionSelected(t.step)}
-            key={i}
-            {...t}
-            scaledY={scaledY}
-            numBeneficiaries={numBeneficiaries}
-            numSteps={numSteps} />
-        ))}
+        {TRANSACTIONS[id].map((t, i) => {
+          const { from, to, step } = t;
+          const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
+          const fromPos = _getPosition(from, numBeneficiaries);
+          const toPos = _getPosition(to, numBeneficiaries);
+          return (
+              <Transaction
+                active={activeStep === t.step || activeStep == t.pairStep}
+                onClick={() => this._handleTransactionSelected(t.step)}
+                key={i}
+                {...t}
+                scaledY={scaledY}
+                numBeneficiaries={numBeneficiaries}
+                numSteps={numSteps} />
+          );
+        }
+      )}
       </TransactionLines>
     );
 
@@ -515,7 +503,6 @@ class TimelineDiagram extends Component {
           {benBox}
           {orgLines}
           {transactionLines}
-          {initialChain}
           <defs>
             <marker id='arrow' markerWidth='10' markerHeight='10' refX='5' refY='3' orient='auto' markerUnits='strokeWidth' viewBox='0 0 10 10'>
               <path d='M0,0 l0,6 l3,-3 z' fill='black' />
@@ -547,7 +534,7 @@ class TimelineDiagram extends Component {
                   <td>{b.tokens || '0'} {
                       activeOrgs.includes(b.org)
                       && activeTransaction.type === 'tokens'
-                      && <BalanceCellChange from={activeTransaction.from === b.org}
+                      && <BalanceCellChange positive={activeTransaction.from === b.org}
                       ><span>{activeTransaction.from === b.org ? '-' : '+'}{activeTransaction.amount}</span></BalanceCellChange>
                   }
                   </td>
@@ -555,7 +542,7 @@ class TimelineDiagram extends Component {
                     {b.USD || '0'} {
                         activeOrgs.includes(b.org)
                         && activeTransaction.type === 'USD'
-                        && <BalanceCellChange from={activeTransaction.from === b.org}
+                        && <BalanceCellChange positive={activeTransaction.from === b.org}
                         ><span>{activeTransaction.from === b.org ? '-' : '+'}{activeTransaction.amount}</span></BalanceCellChange>
                     }
                   </td>
