@@ -18,7 +18,7 @@ export const TRANSACTIONS = {
       to: 'ngo',
       amount: 1000,
       type: 'tokens',
-      desc: '#AMOUNT# #TYPE# issued to #RECIPIENT#'
+      desc: 'Tokens issued to #RECIPIENT#'
     },
     {
       step: 1,

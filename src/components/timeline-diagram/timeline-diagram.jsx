@@ -24,6 +24,7 @@ import {
   TimelineDiagramWrapper,
   SVG,
   TransactionDescription,
+  TransactionsNav,
   Balances,
   BalanceRow,
   BalanceCellChange,
@@ -293,13 +294,15 @@ class TimelineDiagram extends Component {
     } = this.props;
     const ratio = height / width;
     const scaledY = val => ratio * val;
+    const isWide = width >= 1000;
 
     const x = left;
     const y = top - ((bottom - top) * 0.3);
     const w = Math.max(right - left, 300);
     const h = scaledY(bottom - top);
+    const leftOffset = isWide ? 150 : 0;
 
-    const viewBox = `${x} ${y} ${w + 100} ${h}`;
+    const viewBox = `${x} ${y} ${w + leftOffset} ${h}`;
     return viewBox;
   }
   _focusOnStep(step) {
@@ -528,7 +531,7 @@ class TimelineDiagram extends Component {
         </SVG>
 
         <Balances>
-          <h4>Balances at Step {activeStep}</h4>
+          <h4>Balances at Step {activeStep + 1}</h4>
           <table cellSpacing={0} cellPadding={0}>
             <thead>
               <tr>
@@ -545,7 +548,7 @@ class TimelineDiagram extends Component {
                       activeOrgs.includes(b.org)
                       && activeTransaction.type === 'tokens'
                       && <BalanceCellChange from={activeTransaction.from === b.org}
-                      >{activeTransaction.amount}</BalanceCellChange>
+                      ><span>{activeTransaction.from === b.org ? '-' : '+'}{activeTransaction.amount}</span></BalanceCellChange>
                   }
                   </td>
                   <td>
@@ -553,7 +556,7 @@ class TimelineDiagram extends Component {
                         activeOrgs.includes(b.org)
                         && activeTransaction.type === 'USD'
                         && <BalanceCellChange from={activeTransaction.from === b.org}
-                        >{activeTransaction.amount}</BalanceCellChange>
+                        ><span>{activeTransaction.from === b.org ? '-' : '+'}{activeTransaction.amount}</span></BalanceCellChange>
                     }
                   </td>
                 </BalanceRow>
@@ -562,10 +565,14 @@ class TimelineDiagram extends Component {
           </table>
           {description && showTransactions && (
             <TransactionDescription>
-              <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
-              <h3>{description}</h3>
-              <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
+              <h3>{activeStep + 1}. {description}</h3>
             </TransactionDescription>
+          )}
+          {description && showTransactions && (
+            <TransactionsNav>
+              <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
+              <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
+            </TransactionsNav>
           )}
         </Balances>
 

@@ -9,19 +9,15 @@ export const TimelineDiagramWrapper = styled.div`
 export const SVG = styled.svg`
 `;
 
-export const TransactionDescription = styled.div`
+
+export const TransactionsNav = styled.nav`
   width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 1rem;
-
-  h3 {
-    padding: 0 1rem;
-    line-height: 2rem;
-    text-align: center;
-  }
+  margin: 0 0 2rem;
+  ${media.fromLarge`margin: 0`}
 
   > svg {
     cursor: pointer;
@@ -36,6 +32,26 @@ export const TransactionDescription = styled.div`
   }
 `;
 
+export const TransactionDescription = styled.div`
+  width: 100%;
+  padding-bottom: 1rem;
+
+  ${media.fromLarge`
+    height: 100px;
+    display: flex;
+    align-items: center;
+  `}
+
+  h3 {
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    background: ${theme.colors.main2};
+    color: ${theme.colors.light};
+    border: 1px solid ${theme.colors.dark};
+  }
+`;
+
 export const Balances = styled.div`
   padding: 0.5rem 2rem;
   position: absolute;
@@ -46,8 +62,8 @@ export const Balances = styled.div`
 
   ${media.fromLarge`
     padding: 2rem;
-    width: 300px;
-    right: 1rem;
+    width: 360px;
+    right: 0;
     top: 0;
     border-top: none;
     border-left: 1px solid ${theme.colors.dark};
@@ -60,11 +76,11 @@ export const Balances = styled.div`
 
   > table {
     width: 100%;
-    margin: 0 0 2rem 0;
+    margin: 0 auto 2rem;
 
     td, th {
       padding: 0.5rem;
-      ${media.fromLarge`padding: 2rem;`}
+      ${media.fromLarge`padding: 2rem 1rem;`}
       text-align: center;
     }
 
@@ -75,7 +91,7 @@ export const Balances = styled.div`
 `;
 
 export const BalanceRow = styled.tr`
-  border-bottom: 1px solid rgb(222, 222, 222);
+  border-bottom: 1px dashed rgb(222, 222, 222);
 
   td {
     opacity: 0.5;
@@ -89,17 +105,23 @@ export const BalanceRow = styled.tr`
   `}
 `;
 export const BalanceCellChange = styled.div`
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  font-size: 0.8rem;
-  background: ${props => props.from ? theme.colors.negative : theme.colors.positive};
-  color: ${props => props.from ? theme.colors.light : theme.colors.dark};
-  padding: 0.3rem;
-  border-radius: 2px;
+  position: static;
+  width: auto;
+  text-align: center;
 
-  &::before {
-    content: '${props => props.from ? '-' : '+'}';
+  ${media.fromLarge`
+    position: absolute;
+    width: 100%;
+    bottom: 4px;
+    right: 0;
+  `}
+
+  > span {
+    border: 1px solid ${props => props.from ? theme.colors.negative : theme.colors.positive};
+    padding: 0.1rem 0.3rem;
+    color: ${theme.colors.dark};
+    border-radius: 2px;
+    font-size: 0.8rem;
   }
 `;
 

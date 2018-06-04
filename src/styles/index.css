@@ -21,18 +21,23 @@ p {
 }
 h1 {
   font-size: 4.6rem;
+  line-height: 6rem;
 }
 h2 {
   font-size: 2.4rem;
+  line-height: 3.6rem;
 }
 h3 {
   font-size: 1.8rem;
+  line-height: 2.4rem;
 }
 h4 {
   font-size: 1.6rem;
+  line-height: 2.2rem;
 }
 h5 {
   font-size: 1.5rem;
+  line-height: 2rem;
 }
 button, a {
   user-select: none;
