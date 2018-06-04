@@ -4,7 +4,10 @@ import _ from 'lodash';
 import * as log from 'loglevel';
 
 // Data
-import { TRANSACTIONS } from '../../mock-data/transactions';
+import {
+  ORGS,
+  TRANSACTIONS
+} from '../../mock-data/transactions';
 
 // Services
 import { balanceService as balances } from '../../services/balance-service';
@@ -20,7 +23,10 @@ import {
   OrgLabel,
   TimelineDiagramWrapper,
   SVG,
-  DescriptionSection,
+  TransactionDescription,
+  Balances,
+  BalanceRow,
+  BalanceCellChange,
   DisberseRect,
   NGORect,
   NodeLabel,
@@ -30,8 +36,6 @@ import {
   TimeStepRect,
   TransactionLine,
   TransactionSource,
-  TransactionTokens,
-  TransactionGroupOutline,
   TransactionGroup,
   TransLabel,
   TransactionLines
@@ -50,6 +54,8 @@ const layout = {
 };
 
 const LINES_HEIGHT = 600;
+
+const _getNiceName = abbrev => abbrev in ORGS ? ORGS[abbrev] : abbrev;
 
 const _genBeneficiaryPosition = ({ index, numBeneficiaries }) => {
 
@@ -114,11 +120,12 @@ const Transaction = ({
 
   const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
   const animationDuration = 4;
+  const positiveDir = leftPos === fromPos;
 
-  const fromOffset = leftPos === fromPos ? 5 : -5;
-  const toOffset = leftPos === fromPos ? -5 : 5;
-  const fromAnchor = leftPos === fromPos ? 'start' : 'end';
-  const toAnchor = leftPos === fromPos ? 'end' : 'start';
+  const fromOffset = positiveDir ? 5 : -5;
+  const toOffset = positiveDir ? -5 : 5;
+  const fromAnchor = positiveDir ? 'start' : 'end';
+  const toAnchor = positiveDir ? 'end' : 'start';
 
   const description = desc
     ? desc
@@ -132,6 +139,8 @@ const Transaction = ({
     const pathData = `M${leftPos},${scaledY(yPos - 20)} q0,20 20,20 h${width - 20} v1 h${-(width - 20)} q-20,0 -20,20 z`;
 
     const bulletWidth = amount < 500 ? 20 : 50;
+    const prefix = positiveDir ? '' : <tspan dy={-0.6}>←</tspan>;
+    const suffix = positiveDir ? <tspan dy={-0.6}>→</tspan> : '';
 
     return (
       <TransactionGroup active={active} onClick={onClick}>
@@ -162,13 +171,11 @@ const Transaction = ({
           )
         }
         <g>
-
-          <NodeLabel active={active} textAnchor={fromAnchor} x={fromPos + fromOffset} y={scaledY(yPos - 5)}>{from}</NodeLabel>
-          {amount && <NodeLabel active={active} textAnchor={fromAnchor} x={fromPos + fromOffset} y={scaledY(yPos + 30)}>{-amount} {type}</NodeLabel>}
+          <NodeLabel active={active} textAnchor={fromAnchor} x={fromPos + fromOffset} y={scaledY(yPos - 5)}>{_getNiceName(from)}</NodeLabel>
+          {amount && <NodeLabel active={active} textAnchor={'middle'} x={leftPos + ((rightPos - leftPos) / 2)} y={scaledY(yPos + 30)}>{prefix} {amount} {type} {suffix}</NodeLabel>}
         </g>
         <g>
-          <NodeLabel active={active} textAnchor={toAnchor} x={toPos + toOffset} y={scaledY(yPos - 5)}>{to}</NodeLabel>
-          {amount && <NodeLabel active={active} textAnchor={toAnchor} x={toPos + toOffset} y={scaledY(yPos + 30)}>+{amount} {type}</NodeLabel>}
+          <NodeLabel active={active} textAnchor={toAnchor} x={toPos + toOffset} y={scaledY(yPos - 5)}>{_getNiceName(to)}</NodeLabel>
         </g>
         <defs>
           <linearGradient id={`grad-${step}`}>
@@ -182,42 +189,6 @@ const Transaction = ({
       </TransactionGroup>
     )
   }
-  return (
-    <TransactionGroup active={active}>
-      <TransactionLine
-        active={active}
-        x1={fromPos}
-        x2={toPos}
-        y1={scaledY(yPos)}
-        y2={scaledY(yPos)} />
-      <TransactionSource r={5} cx={fromPos} cy={scaledY(yPos)} fill='black' />
-      {active && _.times(8, i => (
-        <TransactionTokens
-          r={2}
-          cx={fromPos}
-          cy={scaledY(yPos)}
-          opacity={1}
-          fill='black'>
-          <animate
-            attributeType='XML'
-            attributeName='cx'
-            from={fromPos}
-            to={toPos}
-            dur={`${animationDuration}s`}
-            begin={`${0.1 * i}s`}
-            repeatCount='indefinite' />
-        </TransactionTokens>
-    ))}
-      {active && <TransLabel x={leftPos + ((rightPos - leftPos) * 0.5)} y={scaledY(yPos - 10)}>{description}</TransLabel>}
-      <TransactionGroupOutline
-        active={active}
-        onClick={onClick}
-        x={leftPos - 15}
-        y={scaledY(yPos - 15)}
-        width={30 + (rightPos - leftPos)}
-        height={scaledY(30)} />
-    </TransactionGroup>
-  );
 };
 
 class TimelineDiagram extends Component {
@@ -244,7 +215,7 @@ class TimelineDiagram extends Component {
     this._changeViewBox();
   }
   _changeViewBox(viewBox) {
-    const nextViewBox = viewBox || this._getViewBox({ zoom: 1 });
+    const nextViewBox = viewBox || this._getViewBox({});
     window.TweenMax.to(
       this.svg,
       1.5,
@@ -324,11 +295,11 @@ class TimelineDiagram extends Component {
     const scaledY = val => ratio * val;
 
     const x = left;
-    const y = top;
-    const w = right - left;
+    const y = top - ((bottom - top) * 0.3);
+    const w = Math.max(right - left, 300);
     const h = scaledY(bottom - top);
 
-    const viewBox = `${x} ${y} ${w} ${h}`;
+    const viewBox = `${x} ${y} ${w + 100} ${h}`;
     return viewBox;
   }
   _focusOnStep(step) {
@@ -517,6 +488,21 @@ class TimelineDiagram extends Component {
 
     const iconProps = { color: theme.colors.dark, width: 50, height: 50 };
 
+    const orgBalances = balances.orgs.map(
+      org => {
+        const b = balances._getBalanceWithinWindow(org, [0, activeStep]);
+        return {
+          org,
+          name: _getNiceName(org),
+          tokens: b.tokens || 0,
+          USD: b.USD || 0,
+        }
+      }
+    );
+
+    const activeTransaction = _.find(TRANSACTIONS[id], { step: activeStep });
+    const activeOrgs = [activeTransaction.from, activeTransaction.to];
+
     return (
       <TimelineDiagramWrapper>
         <SVG
@@ -538,16 +524,51 @@ class TimelineDiagram extends Component {
               <stop offset='70%' stopColor={theme.colors.bright} stopOpacity={0} />
               <stop offset='100%' stopColor={theme.colors.bright} stopOpacity={0} />
             </linearGradient>
-
           </defs>
         </SVG>
-        {description && showTransactions && (
-          <DescriptionSection>
-            <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
-            <h1>{description}</h1>
-            <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
-          </DescriptionSection>
-        )}
+
+        <Balances>
+          <h4>Balances at Step {activeStep}</h4>
+          <table cellSpacing={0} cellPadding={0}>
+            <thead>
+              <tr>
+                <th>Org</th>
+                <th>TOKENS</th>
+                <th>USD</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orgBalances.map(b => (
+                <BalanceRow key={`row-${b.name}`} active={activeTransaction.type === 'settle' || activeOrgs.includes(b.org)}>
+                  <td>{b.name}</td>
+                  <td>{b.tokens || '0'} {
+                      activeOrgs.includes(b.org)
+                      && activeTransaction.type === 'tokens'
+                      && <BalanceCellChange from={activeTransaction.from === b.org}
+                      >{activeTransaction.amount}</BalanceCellChange>
+                  }
+                  </td>
+                  <td>
+                    {b.USD || '0'} {
+                        activeOrgs.includes(b.org)
+                        && activeTransaction.type === 'USD'
+                        && <BalanceCellChange from={activeTransaction.from === b.org}
+                        >{activeTransaction.amount}</BalanceCellChange>
+                    }
+                  </td>
+                </BalanceRow>
+              ))}
+            </tbody>
+          </table>
+          {description && showTransactions && (
+            <TransactionDescription>
+              <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
+              <h3>{description}</h3>
+              <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
+            </TransactionDescription>
+          )}
+        </Balances>
+
       </TimelineDiagramWrapper>
     );
   }

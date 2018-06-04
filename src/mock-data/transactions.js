@@ -1,3 +1,15 @@
+export const ORGS = {
+  'ngo': 'NGO',
+  'ben0': 'School A',
+  'ben1': 'School B',
+  'ben2': 'School C',
+  'ben3': 'School D',
+  'ben4': 'School E',
+  'ben5': 'School F',
+  'par': 'Corporate Partner',
+  'dis': 'Disberse'
+};
+
 export const TRANSACTIONS = {
   1: [
     {

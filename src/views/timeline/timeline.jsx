@@ -24,16 +24,6 @@ class Timeline extends Component {
   render() {
     const { match: { params: { id }} } = this.props;
     balances.init({ id, transactions: TRANSACTIONS[id] });
-    // const b = balances.getBalance('ben0');
-    // const ins = balances.getIns('ben0');
-    // const outs = balances.getOuts('ben0');
-    //
-    // const b2 = balances.getBalance('ben0', [4,5]);
-    // console.table(b);
-    // console.table(ins);
-    // console.table(outs);
-    // console.table(b2);
-    // log.info('ben0', b, ins, outs);
     return (
       <TimelineWrapper>
         <ContainerDimensions>

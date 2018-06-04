@@ -9,18 +9,19 @@ export const TimelineDiagramWrapper = styled.div`
 export const SVG = styled.svg`
 `;
 
-export const DescriptionSection = styled.section`
+export const TransactionDescription = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  padding: 2rem;
-  border-top: 1px solid ${theme.colors.dark};
-  background: ${theme.colors.light};
-  text-align: center;
+  padding-bottom: 1rem;
+
+  h3 {
+    padding: 0 1rem;
+    line-height: 2rem;
+    text-align: center;
+  }
 
   > svg {
     cursor: pointer;
@@ -32,6 +33,73 @@ export const DescriptionSection = styled.section`
         fill: white;
       }
     }
+  }
+`;
+
+export const Balances = styled.div`
+  padding: 0.5rem 2rem;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  background: white;
+  border-top: 1px solid ${theme.colors.dark};
+
+  ${media.fromLarge`
+    padding: 2rem;
+    width: 300px;
+    right: 1rem;
+    top: 0;
+    border-top: none;
+    border-left: 1px solid ${theme.colors.dark};
+    border-bottom: 1px solid ${theme.colors.dark};
+  `};
+
+  > h4 {
+    text-align: center;
+  }
+
+  > table {
+    width: 100%;
+    margin: 0 0 2rem 0;
+
+    td, th {
+      padding: 0.5rem;
+      ${media.fromLarge`padding: 2rem;`}
+      text-align: center;
+    }
+
+    th {
+      text-decoration: underline;
+    }
+  }
+`;
+
+export const BalanceRow = styled.tr`
+  border-bottom: 1px solid rgb(222, 222, 222);
+
+  td {
+    opacity: 0.5;
+    position: relative;
+  }
+  ${props => props.active && `
+    td {
+      font-weight: bold;
+      opacity: 1;
+    }
+  `}
+`;
+export const BalanceCellChange = styled.div`
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.8rem;
+  background: ${props => props.from ? theme.colors.negative : theme.colors.positive};
+  color: ${props => props.from ? theme.colors.light : theme.colors.dark};
+  padding: 0.3rem;
+  border-radius: 2px;
+
+  &::before {
+    content: '${props => props.from ? '-' : '+'}';
   }
 `;
 
@@ -114,19 +182,6 @@ export const TransactionJuice = styled.path`
 export const TransactionSource = styled.circle`
   stroke: ${theme.colors.main4};
   transition: all 1s;
-`;
-
-export const TransactionTokens = styled.circle`
-  fill: ${theme.colors.main4};
-`;
-
-export const TransactionGroupOutline = styled.rect`
-  fill: ${theme.colors.alternate};
-  fill-opacity: 0;
-  cursor: pointer;
-  &:hover {
-    fill-opacity: 0.1;
-  }
 `;
 
 export const TransactionGroup = styled.g``;

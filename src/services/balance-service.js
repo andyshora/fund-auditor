@@ -18,7 +18,6 @@ class BalanceService {
     if (this._id === id) {
       return;
     }
-    log.info('BalanceService.init', transactions);
 
     this._id = id;
     this._transactions = transactions;
@@ -27,6 +26,7 @@ class BalanceService {
     this._outs = {};
 
     const _uniqueOrgs = _getUniqueOrgs(this._transactions);
+    this._orgs = _uniqueOrgs;
     const _uniqueTypes = _getUniqueTypes(this._transactions);
     _uniqueOrgs.forEach(orgName => {
       this._balances[orgName] = {};
@@ -67,7 +67,7 @@ class BalanceService {
     });
   }
   _getBalanceWithinWindow(orgName, timeWindow) {
-    log.info('_getBalanceWithinWindow', orgName, timeWindow, this._transactions);
+    // log.info('_getBalanceWithinWindow', orgName, timeWindow, this._transactions);
     if (timeWindow.length !== 2) {
       return;
     }
@@ -83,10 +83,10 @@ class BalanceService {
           balance[type] = 0;
         }
         if (t.from === orgName) {
-          log.info('type -= ', amount);
+          // log.info('type -= ', amount);
           balance[type] -= amount;
         } else if (t.to === orgName) {
-          log.info('type += ', amount);
+          // log.info('type += ', amount);
           balance[type] += amount;
         }
       }
@@ -117,7 +117,9 @@ class BalanceService {
       ? this._outs[orgName]
       : null;
   }
-
+  get orgs() {
+    return this._orgs;
+  }
 }
 
 export const balanceService = new BalanceService();
