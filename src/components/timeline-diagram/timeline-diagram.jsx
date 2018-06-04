@@ -54,7 +54,7 @@ const layout = {
   }
 };
 
-const LINES_HEIGHT = 600;
+const LINES_HEIGHT = 800;
 
 const _getNiceName = abbrev => abbrev in ORGS ? ORGS[abbrev] : abbrev;
 
@@ -99,6 +99,8 @@ const _getColor = str => {
   }
 }
 
+const _getNumSteps = numBeneficiaries => 3 + (numBeneficiaries * 3);
+
 const Transaction = ({
   active,
   amount,
@@ -119,7 +121,7 @@ const Transaction = ({
   const rightPos = Math.max(fromPos, toPos);
   const width = rightPos - leftPos;
 
-  const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
+  const yPos = 200 + (step * (LINES_HEIGHT / (numSteps - 1)));
   const animationDuration = 4;
   const positiveDir = leftPos === fromPos;
 
@@ -148,13 +150,19 @@ const Transaction = ({
 
     return (
       <TransactionGroup active={active} onClick={onClick}>
+        {false && <rect
+          fill={theme.colors.light}
+          x={leftPos + 10}
+          y={scaledY(yPos - 2)}
+          width={(rightPos - leftPos) - 20}
+          height={scaledY(14)} />}
         <path
           d={pathDataRect}
           fill={bgFill}
           fillOpacity={active ? 1 : 0.2}
           strokeDasharray='2,1'
           stroke={stroke} />
-        {active && false && (
+        {active && (
           <g clipPath={`url(#clip-${step})`}>
             <rect
               x={fromPos}
@@ -174,12 +182,12 @@ const Transaction = ({
           )}
         <g>
           <TransactionSource
-            r={scaledY(5)}
+            r={scaledY(8)}
             cx={fromPos}
             cy={scaledY(yPos + 5)}
             fill='white' />
           <TransactionSource
-            r={scaledY(5)}
+            r={scaledY(8)}
             cx={toPos}
             cy={scaledY(yPos + 5)}
             fill='white' />
@@ -237,7 +245,8 @@ class TimelineDiagram extends Component {
       }
     );
   }
-  _getDescription(index) {
+  _getDescription = index => {
+    log.info('_getDescription', index);
     const { id } = this.props;
     const t = TRANSACTIONS[id][index];
     return t.desc
@@ -282,7 +291,7 @@ class TimelineDiagram extends Component {
     const left = Math.min(fromPos, toPos) - padding;
     const right = Math.max(fromPos, toPos) + padding;
 
-    const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
+    const yPos = 200 + (step * (LINES_HEIGHT / (numSteps - 1)));
 
     const top = yPos;
     const bottom = top + (right - left);
@@ -308,14 +317,21 @@ class TimelineDiagram extends Component {
     const scaledY = val => ratio * val;
     const isWide = width >= 1000;
 
-    const x = left;
-    const y = Math.max(130, top - ((bottom - top) * 0.3));
-    const w = right - left;
-    const h = scaledY(bottom - top);
+    let x = left;
+    let w = right - left;
+
+    const minW = 400;
+    if (w < minW) {
+      left -= (minW - w) / 2;
+      x = left;
+      w = minW;
+    }
+
+    let y = Math.max(130, top - ((bottom - top) * 0.3));
+    let h = scaledY(bottom - top);
     const leftOffset = isWide ? 150 : 0;
     const topOffset = isWide ? -100 : 0;
 
-    log.info('y', y);
 
     const viewBox = `${x} ${y + topOffset} ${w + leftOffset} ${h}`;
     return viewBox;
@@ -336,9 +352,9 @@ class TimelineDiagram extends Component {
   }
   nextStep = () => {
     const { activeStep } = this.state;
-    const { id: numBeneficiaries } = this.props;
-    const numSteps = 1 + (numBeneficiaries * 3);
-    const newStep = activeStep === numSteps ? 0 : activeStep + 1;
+    const { id } = this.props;
+    const numSteps = TRANSACTIONS[id].length;
+    const newStep = activeStep === numSteps - 1 ? 0 : activeStep + 1;
 
     this.setState({
       activeStep: newStep,
@@ -349,9 +365,9 @@ class TimelineDiagram extends Component {
   }
   prevStep = () => {
     const { activeStep } = this.state;
-    const { id: numBeneficiaries } = this.props;
-    const numSteps = 1 + (numBeneficiaries * 3);
-    const newStep = activeStep ? activeStep - 1 : numSteps;
+    const { id } = this.props;
+    const numSteps = TRANSACTIONS[id].length;
+    const newStep = activeStep ? activeStep - 1 : numSteps - 1;
 
     this.setState({
       activeStep: newStep,
@@ -376,7 +392,7 @@ class TimelineDiagram extends Component {
 
     const ratio = height / width;
     const numBeneficiaries = id;
-    const numSteps = 1 + (numBeneficiaries * 3);
+    const numSteps = TRANSACTIONS[id].length;
 
     const scaledY = val => ratio * val;
 
@@ -448,7 +464,7 @@ class TimelineDiagram extends Component {
           <TimeStepRect
             key={i}
             x={50}
-            y={scaledY(200 + ((i + 1) * (LINES_HEIGHT / (numSteps + 1))))}
+            y={scaledY(200 + (i * (LINES_HEIGHT / (numSteps - 1))))}
             height={1}
             width={900} />
         ))}
@@ -459,7 +475,7 @@ class TimelineDiagram extends Component {
       <TransactionLines ref={el => { this.transactionLines = el; }} opacity={showTransactions ? 1 : 0}>
         {TRANSACTIONS[id].map((t, i) => {
           const { from, to, step } = t;
-          const yPos = 200 + (step * (LINES_HEIGHT / (numSteps + 1)));
+          const yPos = 200 + ((step + 1) * (LINES_HEIGHT / (numSteps + 1)));
           const fromPos = _getPosition(from, numBeneficiaries);
           const toPos = _getPosition(to, numBeneficiaries);
           return (
@@ -551,7 +567,7 @@ class TimelineDiagram extends Component {
             </tbody>
           </table>
           {description && showTransactions && (
-            <TransactionDescription>
+            <TransactionDescription onClick={this.nextStep}>
               <h3>{activeStep + 1}. {description}</h3>
             </TransactionDescription>
           )}

@@ -11,7 +11,10 @@ import TimelineDiagram from '../../components/timeline-diagram';
 import { balanceService as balances } from '../../services/balance-service';
 
 // Data
-import { TRANSACTIONS } from '../../mock-data/transactions';
+import {
+  INITIAL_BALANCES,
+  TRANSACTIONS
+} from '../../mock-data/transactions';
 
 // Styles
 import { TimelineWrapper } from './timeline-styles';
@@ -21,10 +24,19 @@ class Timeline extends Component {
   _handlePrevTapped = () => this._diagram && this._diagram.prevStep()
   _handleNextTapped = () => this._diagram && this._diagram.nextStep()
   _handleResetTapped = () => this._diagram && this._diagram.resetView()
+  componentDidMount() {
+    const { match: { params: { id }} } = this.props;
+    const dataSetId = typeof id === 'undefined' ? 1 : id;
+    balances.init({
+      id: dataSetId,
+      transactions: TRANSACTIONS[dataSetId],
+      initialBalances: INITIAL_BALANCES[dataSetId]
+    });
+    log.warn('init');
+  }
   render() {
     const { match: { params: { id }} } = this.props;
     const dataSetId = typeof id === 'undefined' ? 1 : id;
-    balances.init({ id: dataSetId, transactions: TRANSACTIONS[dataSetId] });
     return (
       <TimelineWrapper>
         <ContainerDimensions>

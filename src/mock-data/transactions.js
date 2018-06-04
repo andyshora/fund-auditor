@@ -10,6 +10,19 @@ export const ORGS = {
   'dis': 'Disberse'
 };
 
+export const INITIAL_BALANCES = {
+  1: {
+    'dis': {
+      'USD': 100
+    }
+  },
+  3: {
+    'dis': {
+      'USD': 300
+    }
+  }
+};
+
 export const TRANSACTIONS = {
   1: [
     {
@@ -51,7 +64,24 @@ export const TRANSACTIONS = {
       to: 'dis',
       amount: 0,
       type: 'settle',
-      desc: 'Partner provides proof of all transactions'
+      desc: 'Partner provides proof of all transactions to Disberse'
+    },
+    {
+      step: 5,
+      from: 'par',
+      to: 'dis',
+      amount: 100,
+      type: 'tokens',
+      desc: 'Tokens sent back to Disperse'
+    },
+    {
+      step: 6,
+      pairStep: 5,
+      from: 'dis',
+      to: 'par',
+      amount: 100,
+      type: 'USD',
+      desc: 'Disberse convert tokens into USD'
     }
   ],
   3: [
@@ -59,9 +89,9 @@ export const TRANSACTIONS = {
       step: 0,
       from: 'dis',
       to: 'ngo',
-      amount: 1000,
+      amount: 300,
       type: 'tokens',
-      desc: '#AMOUNT# #TYPE# sent from #SENDER# to #RECIPIENT#'
+      desc: 'Tokens issued to #RECIPIENT#'
     },
     {
       step: 1,
@@ -117,7 +147,7 @@ export const TRANSACTIONS = {
       pairStep: 6,
       from: 'par',
       to: 'ben1',
-      amount: 100,
+      amount: 90,
       type: 'USD',
       desc: 'Tokens successfully converted into #TYPE#'
     },
@@ -125,7 +155,7 @@ export const TRANSACTIONS = {
       step: 8,
       from: 'ben2',
       to: 'par',
-      amount: 100,
+      amount: 90,
       type: 'tokens',
       desc: 'Tokens sent to Partner for Conversion'
     },
@@ -134,7 +164,7 @@ export const TRANSACTIONS = {
       pairStep: 8,
       from: 'par',
       to: 'ben2',
-      amount: 100,
+      amount: 90,
       type: 'USD',
       desc: 'Tokens successfully converted into #TYPE#'
     },
@@ -144,7 +174,7 @@ export const TRANSACTIONS = {
       to: 'dis',
       amount: 0,
       type: 'settle',
-      desc: 'Partner provides proof of all transactions'
+      desc: 'Partner provides proof of all transactions back to Disberse'
     }
   ]
 };

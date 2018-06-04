@@ -14,7 +14,7 @@ const _getUniqueTypes = transactions => _.uniqBy(transactions, t => t.type).map(
 class BalanceService {
   id = null
 
-  init({ id, transactions }) {
+  init({ id, transactions, initialBalances = null }) {
     if (this._id === id) {
       return;
     }
@@ -22,6 +22,7 @@ class BalanceService {
     this._id = id;
     this._transactions = transactions;
     this._balances = {};
+    this._initialBalances = initialBalances;
     this._ins = {};
     this._outs = {};
 
@@ -29,13 +30,16 @@ class BalanceService {
     this._orgs = _uniqueOrgs;
     const _uniqueTypes = _getUniqueTypes(this._transactions);
     _uniqueOrgs.forEach(orgName => {
-      this._balances[orgName] = {};
+      const initialBalances = this._initialBalances[orgName] || {};
+      this._balances[orgName] = {...initialBalances};
       this._ins[orgName] = [];
       this._outs[orgName] = [];
       _uniqueTypes.forEach(type => {
-        this._balances[orgName][type] = 0;
+        this._balances[orgName][type] = this._balances[orgName][type] || 0;
       });
     });
+
+    console.table(this._balances);
 
     this._parseTransactions();
 
@@ -71,7 +75,7 @@ class BalanceService {
     if (timeWindow.length !== 2) {
       return;
     }
-    const balance = {};
+    const balance = timeWindow[0] === 0 && orgName in this._initialBalances ? {...this._initialBalances[orgName]} : {};
     const filteredTransactions = _.filter(this._transactions, t => t.from === orgName || t.to === orgName);
     filteredTransactions.forEach(t => {
       const { type, amount, from, to, step } = t;
@@ -90,7 +94,22 @@ class BalanceService {
           balance[type] += amount;
         }
       }
-    });
+    }, this);
+
+    // set initial balance if we're starting at 0
+    // if (!timeWindow[0]) {
+    //   const initialBalances = this._initialBalances[orgName];
+    //
+    //   for (let type in initialBalances) {
+    //     const amount = initialBalances[type];
+    //     if (type in balance) {
+    //       balance[type] += amount;
+    //     } else {
+    //       balance[type] = amount;
+    //     }
+    //   }
+    // }
+
     return balance;
   }
   getBalance(orgName, timeWindow) {
@@ -118,7 +137,14 @@ class BalanceService {
       : null;
   }
   get orgs() {
-    return this._orgs;
+    return _.sortBy(this._orgs, orgName => {
+      switch (orgName) {
+        case 'dis': return 1;
+        case 'ngo': return 2;
+        case 'par': return 10;
+        default: return 3;
+      }
+    });
   }
 }
 

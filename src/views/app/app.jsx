@@ -46,10 +46,8 @@ class App extends Component {
           <div>
             <Header>
               <Nav>
-                <NavLink activeClassName='--active' to='/transaction'>Transaction</NavLink>
-                <NavLink activeClassName='--active' to='/timeline/1'>1 Ben</NavLink>
-                <NavLink activeClassName='--active' to='/timeline/3'>3 Ben</NavLink>
-                <NavLink activeClassName='--active' to='/timeline/5'>5 Ben</NavLink>
+                <NavLink activeClassName='--active' to='/timeline/1'>1</NavLink>
+                <NavLink activeClassName='--active' to='/timeline/3'>3</NavLink>
               </Nav>
             </Header>
             <MainSection>

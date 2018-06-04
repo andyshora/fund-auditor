@@ -46,8 +46,8 @@ export const TransactionDescription = styled.div`
     width: 100%;
     padding: 1rem;
     text-align: center;
-    background: ${theme.colors.main2};
-    color: ${theme.colors.light};
+    background: ${theme.colors.light};
+    color: ${theme.colors.dark};
     border: 1px solid ${theme.colors.dark};
   }
 `;
@@ -57,7 +57,7 @@ export const Balances = styled.div`
   position: absolute;
   width: 100%;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgb(255, 255, 255);
   border-top: 1px solid ${theme.colors.dark};
 
   ${media.fromLarge`
@@ -80,8 +80,12 @@ export const Balances = styled.div`
     margin: 0 auto 2rem;
 
     td, th {
-      padding: 0.5rem;
-      ${media.fromLarge`padding: 2rem 1rem;`}
+      padding: 1rem;
+      font-size: 0.8rem;
+      ${media.fromLarge`
+        padding: 2rem 1rem;
+        font-size: 1.2rem;
+        `}
       text-align: center;
     }
 
@@ -122,13 +126,15 @@ export const BalanceCellChange = styled.div`
     padding: 0.1rem 0.3rem;
     color: ${theme.colors.dark};
     border-radius: 2px;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
+
+    ${media.fromLarge`font-size: 0.8rem;`}
   }
 `;
 
 export const OrgLabel = styled.text`
   text-anchor: middle;
-  font-size: 3rem;
+  font-size: 2rem;
   text-transform: uppercase;
   ${media.fromMedium`font-size: 1.6rem;`}
 `;
