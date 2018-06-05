@@ -413,7 +413,7 @@ class TimelineDiagram extends Component {
     const orgLines = (
       <OrgLines>
         <g>
-          <OrgLabel x={100} y={scaledY(120)}>Disberse</OrgLabel>
+          <OrgLabel x={100} y={scaledY(120)}>Plug</OrgLabel>
           <DisberseRect stroke='black' fill='none' x={98} y={scaledY(200)} width={4} height={scaledY(LINES_HEIGHT)} />
           <circle r={5} fill={theme.colors.main2} cx={100} cy={scaledY(150)} />
         </g>
@@ -493,7 +493,7 @@ class TimelineDiagram extends Component {
       </TransactionLines>
     );
 
-    const iconProps = { color: theme.colors.dark, width: 50, height: 50 };
+    const iconProps = { color: theme.colors.dark, width: 30, height: 50 };
 
     const orgBalances = balances.orgs.map(
       org => {
@@ -534,7 +534,17 @@ class TimelineDiagram extends Component {
         </SVG>
 
         <Balances>
-          <h4>Balances at Step {activeStep + 1}</h4>
+          {description && showTransactions && (
+            <TransactionDescription onClick={this.nextStep}>
+              <h3>{activeStep + 1}. {description}</h3>
+            </TransactionDescription>
+          )}
+          {description && showTransactions && (
+            <TransactionsNav>
+              <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
+              <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
+            </TransactionsNav>
+          )}
           <table cellSpacing={0} cellPadding={0}>
             <thead>
               <tr>
@@ -566,17 +576,6 @@ class TimelineDiagram extends Component {
               ))}
             </tbody>
           </table>
-          {description && showTransactions && (
-            <TransactionDescription onClick={this.nextStep}>
-              <h3>{activeStep + 1}. {description}</h3>
-            </TransactionDescription>
-          )}
-          {description && showTransactions && (
-            <TransactionsNav>
-              <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
-              <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
-            </TransactionsNav>
-          )}
         </Balances>
 
       </TimelineDiagramWrapper>

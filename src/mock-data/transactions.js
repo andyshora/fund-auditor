@@ -7,7 +7,7 @@ export const ORGS = {
   'ben4': 'School E',
   'ben5': 'School F',
   'par': 'Local Partner',
-  'dis': 'Disberse'
+  'dis': 'Plug'
 };
 
 export const INITIAL_BALANCES = {
@@ -31,7 +31,7 @@ export const TRANSACTIONS = {
       to: 'ngo',
       amount: 100,
       type: 'tokens',
-      desc: 'Tokens issued to #RECIPIENT#'
+      desc: 'Tokens issued to NGO'
     },
     {
       step: 1,
@@ -39,7 +39,7 @@ export const TRANSACTIONS = {
       to: 'ben0',
       amount: 100,
       type: 'tokens',
-      desc: 'Tokens sent to Beneficiary'
+      desc: 'Tokens transferred to Beneficiary'
     },
     {
       step: 2,
@@ -47,16 +47,16 @@ export const TRANSACTIONS = {
       to: 'par',
       amount: 100,
       type: 'tokens',
-      desc: 'Tokens sent to Partner for Conversion'
+      desc: 'Tokens sent to Partner for conversion to local currency.'
     },
     {
       step: 3,
       pairStep: 2,
       from: 'par',
       to: 'ben0',
-      amount: 90,
+      amount: 98,
       type: 'USD',
-      desc: 'Tokens successfully converted into #TYPE#, minus 10% fee'
+      desc: 'Tokens converted into USD, minus 2% fee'
     },
     {
       step: 4,
@@ -64,7 +64,7 @@ export const TRANSACTIONS = {
       to: 'dis',
       amount: 0,
       type: 'settle',
-      desc: 'Partner provides proof of all transactions to Disberse'
+      desc: 'Partner provides proof of all transactions to Plug'
     },
     {
       step: 5,
@@ -72,7 +72,7 @@ export const TRANSACTIONS = {
       to: 'dis',
       amount: 100,
       type: 'tokens',
-      desc: 'Tokens sent back to Disperse'
+      desc: 'Tokens transferred back to Plug'
     },
     {
       step: 6,
@@ -81,7 +81,7 @@ export const TRANSACTIONS = {
       to: 'par',
       amount: 100,
       type: 'USD',
-      desc: 'Disberse convert tokens into USD'
+      desc: 'Plug convert tokens into USD'
     }
   ],
   3: [
@@ -174,7 +174,7 @@ export const TRANSACTIONS = {
       to: 'dis',
       amount: 0,
       type: 'settle',
-      desc: 'Partner provides proof of all transactions back to Disberse'
+      desc: 'Partner provides proof of all transactions back to Plug'
     }
   ]
 };

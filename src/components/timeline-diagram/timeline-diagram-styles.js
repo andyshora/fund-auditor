@@ -17,16 +17,16 @@ export const TransactionsNav = styled.nav`
   align-items: center;
   justify-content: space-between;
   margin: 0 0 2rem;
+  position: absolute;
+  top: 0.5rem;
   ${media.fromLarge`margin: 0`}
 
   > svg {
     cursor: pointer;
-    border: 1px solid ${theme.colors.dark};
 
     &:hover {
-      background: ${theme.colors.main2};
       > path {
-        fill: white;
+        fill: ${theme.colors.main2};
       }
     }
   }
@@ -34,26 +34,24 @@ export const TransactionsNav = styled.nav`
 
 export const TransactionDescription = styled.div`
   width: 100%;
-  padding-bottom: 1rem;
 
   ${media.fromLarge`
-    height: 100px;
     display: flex;
     align-items: center;
   `}
 
   h3 {
     width: 100%;
-    padding: 1rem;
+    padding: 1.5rem 4rem;
+    margin: 0 0 1rem;
     text-align: center;
     background: ${theme.colors.light};
     color: ${theme.colors.dark};
-    border: 1px solid ${theme.colors.dark};
   }
 `;
 
 export const Balances = styled.div`
-  padding: 0.5rem 2rem;
+  padding: 0.5rem;
   position: absolute;
   width: 100%;
   bottom: 0;
@@ -61,7 +59,7 @@ export const Balances = styled.div`
   border-top: 1px solid ${theme.colors.dark};
 
   ${media.fromLarge`
-    padding: 2rem;
+    padding: 0.5rem;
     width: 360px;
     right: 0;
     top: 0;
@@ -73,6 +71,7 @@ export const Balances = styled.div`
 
   > h4 {
     text-align: center;
+    margin: 1.5rem auto 0;
   }
 
   > table {
@@ -91,6 +90,7 @@ export const Balances = styled.div`
 
     th {
       text-decoration: underline;
+      padding-bottom: 0;
     }
   }
 `;

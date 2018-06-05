@@ -44,12 +44,6 @@ class App extends Component {
       <Wrapper>
         <HashRouter>
           <div>
-            <Header>
-              <Nav>
-                <NavLink activeClassName='--active' to='/timeline/1'>1</NavLink>
-                <NavLink activeClassName='--active' to='/timeline/3'>3</NavLink>
-              </Nav>
-            </Header>
             <MainSection>
               <Switch>
                 <Route path={'/transaction'} component={Transaction} />
