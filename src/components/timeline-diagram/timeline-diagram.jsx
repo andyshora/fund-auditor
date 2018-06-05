@@ -540,7 +540,7 @@ class TimelineDiagram extends Component {
             </TransactionDescription>
           )}
           {description && showTransactions && (
-            <TransactionsNav>
+            <TransactionsNav onClick={this.nextStep}>
               <ChevronLeftIcon onClick={this.prevStep} style={{ ...iconProps }} />
               <ChevronRightIcon onClick={this.nextStep} style={{ ...iconProps }} />
             </TransactionsNav>

@@ -41,9 +41,8 @@ export const TransactionDescription = styled.div`
   `}
 
   h3 {
-    width: 100%;
     padding: 1.5rem 4rem;
-    margin: 0 0 1rem;
+    margin: 0 auto 1rem;
     text-align: center;
     background: ${theme.colors.light};
     color: ${theme.colors.dark};
@@ -51,7 +50,7 @@ export const TransactionDescription = styled.div`
 `;
 
 export const Balances = styled.div`
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   position: absolute;
   width: 100%;
   bottom: 0;
@@ -59,7 +58,7 @@ export const Balances = styled.div`
   border-top: 1px solid ${theme.colors.dark};
 
   ${media.fromLarge`
-    padding: 0.5rem;
+    padding: 0.5rem 0;
     width: 360px;
     right: 0;
     top: 0;
