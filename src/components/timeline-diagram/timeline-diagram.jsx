@@ -122,7 +122,7 @@ const Transaction = ({
   const width = rightPos - leftPos;
 
   const yPos = 200 + (step * (LINES_HEIGHT / (numSteps - 1)));
-  const animationDuration = 4;
+  const animationDuration = 3;
   const positiveDir = leftPos === fromPos;
 
   const fromOffset = positiveDir ? 5 : -5;
@@ -167,9 +167,9 @@ const Transaction = ({
             <rect
               x={fromPos}
               y={scaledY(yPos - 10)}
-              width={20}
+              width={30}
               height={scaledY(20)}
-              fill='url(#grad-transfer)'>
+              fill={theme.colors.bright}>
               <animateTransform
                 attributeName='transform'
                 type='translate'
@@ -246,7 +246,6 @@ class TimelineDiagram extends Component {
     );
   }
   _getDescription = index => {
-    log.info('_getDescription', index);
     const { id } = this.props;
     const t = TRANSACTIONS[id][index];
     return t.desc

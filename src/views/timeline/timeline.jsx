@@ -22,9 +22,7 @@ import { TimelineWrapper } from './timeline-styles';
 
 class Timeline extends Component {
   _diagram = null
-  @keydown('left')
   _handlePrevTapped = () => this._diagram && this._diagram.prevStep()
-  @keydown('right')
   _handleNextTapped = () => this._diagram && this._diagram.nextStep()
   _handleResetTapped = () => this._diagram && this._diagram.resetView()
   componentDidMount() {
@@ -35,6 +33,14 @@ class Timeline extends Component {
       transactions: TRANSACTIONS[dataSetId],
       initialBalances: INITIAL_BALANCES[dataSetId]
     });
+  }
+  @keydown('left')
+  _onLeftTapped() {
+    this._handlePrevTapped();
+  }
+  @keydown('right')
+  _onRightTapped() {
+    this._handleNextTapped();
   }
   render() {
     const { match: { params: { id }} } = this.props;
