@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ContainerDimensions from 'react-container-dimensions';
+import keydown from 'react-keydown';
 
 import * as log from 'loglevel';
 
@@ -21,7 +22,9 @@ import { TimelineWrapper } from './timeline-styles';
 
 class Timeline extends Component {
   _diagram = null
+  @keydown('left')
   _handlePrevTapped = () => this._diagram && this._diagram.prevStep()
+  @keydown('right')
   _handleNextTapped = () => this._diagram && this._diagram.nextStep()
   _handleResetTapped = () => this._diagram && this._diagram.resetView()
   componentDidMount() {
@@ -32,7 +35,6 @@ class Timeline extends Component {
       transactions: TRANSACTIONS[dataSetId],
       initialBalances: INITIAL_BALANCES[dataSetId]
     });
-    log.warn('init');
   }
   render() {
     const { match: { params: { id }} } = this.props;
